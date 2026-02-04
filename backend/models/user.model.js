@@ -22,7 +22,7 @@ const  UserSchema = new mongoose.Schema({
 
 
 //Pre-save Hook
-UserSchema.pre("save" , async function (next) {
+UserSchema.pre("save" , async function () {
      //if password is not chanaged skip hashing 
      if(!this.isModified("password")){
         return ;
@@ -33,4 +33,9 @@ UserSchema.pre("save" , async function (next) {
      
 });
 
+//compare password 
+ UserSchema.methods.comparePassword = async function (enteredPassword) {
+      return await bcrypt.compare(enteredPassword , this.password);
+ }
+ 
 export default mongoose.model('User' , UserSchema);
