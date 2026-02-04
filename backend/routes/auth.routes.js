@@ -1,5 +1,6 @@
 import express from 'express';
-import { register , login } from '../controllers/auth.controller.js';
+import { register , login , verifyEmail } from '../controllers/auth.controller.js';
+import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -7,5 +8,18 @@ const router = express.Router();
 router.post('/register' , register ) ;  
 
 //login route
-router.post('/login' , login)
+router.post('/login' , login);
+
+//auth middleware  checking 
+router.get("/me", authMiddleware, (req, res) => {
+  res.status(200).json({
+    message: "Auth middleware working",
+    userId: req.user
+  });
+});
+
+//verified email
+router.get("/verify-email", verifyEmail);
+
+
 export default  router ;
