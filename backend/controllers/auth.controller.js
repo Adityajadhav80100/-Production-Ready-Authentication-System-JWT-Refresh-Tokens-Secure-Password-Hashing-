@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import { generateToken } from "../utils/jwt.js";
 import crypto from "crypto";
+import { sendEmail } from "../utils/sendemail.js";
 
 export const register = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ export const register = async (req, res) => {
 
     //Verifiction token 
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    
+
 
 
     const Newuser = await User.create({
@@ -29,7 +30,18 @@ export const register = async (req, res) => {
       verificationToken,
       verificationTokenExpires: Date.now() + 24 * 60 * 60 * 1000
     });
-    
+
+    //Sendingg email
+    const verificationLink =
+      `http://localhost:5001/api/auth/verify-email?token=${verificationToken}`;
+
+    await sendEmail(
+      email,
+      "Verify your account",
+      `<h2>Email Verification</h2>
+      <p>Click below to verify your account:</p>
+        <a href="${verificationLink}">Verify Email</a>`
+    );
 
     // 4. send response (NO password) 
     res.json({
