@@ -3,6 +3,7 @@ import { generateToken } from "../utils/jwt.js";
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendemail.js";
 
+
 export const register = async (req, res) => {
   try {
 
@@ -149,6 +150,105 @@ export const verifyEmail = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: " Verification Failed ",
+      error: error.message
+    });
+  }
+}
+
+//Forgot password 
+export const forgotPassword = async (req, res) => {
+  try {
+    // 1️⃣ Get email from request body
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // 2️⃣ Find user by email
+    const user = await User.findOne({ email });
+
+    // 🔐 Security: do NOT reveal if user exists
+    if (!user) {
+      return res.json({
+        message: "If an account with that email exists, a reset link has been sent."
+      });
+    }
+
+    // 3️⃣ Generate secure reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // 4️⃣ Save token + expiry in DB (15 minutes)
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordTokenExpires = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    // 5️⃣ Create reset link
+    const resetLink =
+      `http://localhost:5001/api/auth/reset-password?token=${resetToken}`;
+
+    // 6️⃣ Send reset email (reuse sendEmail utility)
+    await sendEmail(
+      email,
+      "Reset your password",
+      `<h2>Password Reset</h2>
+       <p>You requested to reset your password.</p>
+       <p>Click the button below to reset it:</p>
+       <a href="${resetLink}">Reset Password</a>`
+    );
+
+    // 7️⃣ Final response (same message always for security)
+    res.json({
+      message: "If an account with that email exists, a reset link has been sent."
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server error in forgotPassword",
+      error: error.message
+    });
+  }
+};
+
+
+export const resetPassword = async (req , res ) => {
+  try {
+     const {token , newPassword} = req.body ;
+     
+     if(!token || !newPassword ){
+      return res.status(400).json({ message: "token and newPassword  is required" });
+     }
+
+     //find user
+     const user = await User.findOne({
+        resetPasswordToken : token ,
+        resetPasswordTokenExpires : {$gt : Date.now()} 
+     }) ;
+      
+     if (!user) {
+      return res.status(400).json({
+        message: "token expired or invalid"
+      });
+     }
+   
+    // 3️⃣ update password (hashing happens in model)
+    user.password = newPassword ;
+
+
+  // DELETE THE VERIFICATION TOKEN it one time use only
+    user.resetPasswordToken=undefined ;
+    user.resetPasswordTokenExpires= undefined ;
+
+     await user.save();
+
+    res.json({ message: "ResetPassword  successfully" });
+
+
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server error in ResetPassword",
       error: error.message
     });
   }
