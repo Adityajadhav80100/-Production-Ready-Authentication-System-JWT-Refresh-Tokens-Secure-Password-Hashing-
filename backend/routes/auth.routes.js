@@ -26,8 +26,8 @@ router.get("/me", authMiddleware, (req, res) => {
 });
 
 router.get("/verify-email", verifyEmail);
-router.post("/forgot-Password", forgotPassword);
-router.post("/reset-Password", resetPassword);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 router.post("/refresh-token", refreshAccessToken);
 
 router.get("/adminAccess", authMiddleware, adminMiddleware, adminAccess);

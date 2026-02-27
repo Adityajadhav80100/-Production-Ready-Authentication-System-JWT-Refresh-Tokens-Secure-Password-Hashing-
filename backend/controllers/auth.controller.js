@@ -267,7 +267,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     // 5️⃣ Create reset link
-    const resetLink = `http://localhost:5001/api/auth/reset-password?token=${resetToken}`;
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
 
     // 6️⃣ Send reset email (reuse sendEmail utility)
     await sendEmail(
@@ -294,12 +294,13 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { password } = req.body;
+    const token = req.params.token;
 
-    if (!token || !newPassword) {
+    if (!token || !password) {
       return res
         .status(400)
-        .json({ message: "token and newPassword  is required" });
+        .json({ message: "token and password are required" });
     }
 
     //find user
@@ -315,7 +316,7 @@ export const resetPassword = async (req, res) => {
     }
 
     // 3️⃣ update password (hashing happens in model)
-    user.password = newPassword;
+    user.password = password;
 
     // DELETE THE VERIFICATION TOKEN it one time use only
     user.resetPasswordToken = undefined;
