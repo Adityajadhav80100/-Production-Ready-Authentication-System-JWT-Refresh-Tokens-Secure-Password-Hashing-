@@ -106,38 +106,45 @@ Nodemailer
 
 Gmail SMTP
 
-📁 Project Structure
+## 📁 Project Structure
+
+```
 auth-system/
 │
 ├── backend/
+│   ├── config/
 │   ├── controllers/
 │   ├── middleware/
 │   ├── models/
 │   ├── routes/
 │   ├── utils/
-│   ├── config/
 │   ├── server.js
 │   └── .env
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
-│   │   │   Login.jsx
-│   │   │   Register.jsx
-│   │   │   Dashboard.jsx
-│   │   │   Admin.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Admin.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   └── ResetPassword.jsx
 │   │   │
 │   │   ├── components/
-│   │   │   Navbar.jsx
+│   │   │   └── Navbar.jsx
 │   │   │
 │   │   ├── context/
-│   │   │   AuthContext.jsx
+│   │   │   └── AuthContext.jsx
 │   │   │
 │   │   ├── api.js
 │   │   ├── App.jsx
 │   │   └── main.jsx
+│   │
+│   └── vite.config.js
 │
 └── README.md
+```
 ⚙️ Installation
 Clone Repository
 git clone https://github.com/YOUR_USERNAME/auth-system.git
