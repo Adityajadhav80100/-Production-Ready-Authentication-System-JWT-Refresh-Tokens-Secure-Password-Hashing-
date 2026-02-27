@@ -115,16 +115,15 @@ export const login = async (req, res) => {
     // send access token for 15 min
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false, // true in production
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 15 * 60 * 1000,
     });
 
-    //send Refresh token for 7 days
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // true in production
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -184,13 +183,16 @@ export const logout = async (req, res) => {
     res.clearCookie("refreshToken");
 
     res.json({ message: "Logged out successfully" });
-    
   } catch (error) {
     res.status(500).json({
       message: "Logout failed",
       error: error.message,
     });
   }
+};
+
+export const adminAccess = (req, res) => {
+  res.json({ message: "Admin Access Granted" });
 };
 
 //verify email

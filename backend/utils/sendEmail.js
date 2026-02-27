@@ -1,7 +1,5 @@
 import nodemailer from "nodemailer";
 
-console.log("EMAIL USER:", process.env.EMAIL_USER);
-console.log("EMAIL PASS:", process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -23,6 +21,7 @@ export const sendEmail = async (to, subject, html) => {
     });
 
     console.log("📩 Email sent successfully!");
+  
   } catch (error) {
     console.error("❌ EMAIL ERROR:", error);
     throw error;

@@ -10,7 +10,12 @@ import rateLimit from "express-rate-limit";
 const app = express();
 
 //global middlewares
-app.use(cors());
+app.use(cors({
+  origin : 'http://localhost:5173'   ,
+  credentials : true 
+}));
+
+
 app.use(helmet());
 
 
